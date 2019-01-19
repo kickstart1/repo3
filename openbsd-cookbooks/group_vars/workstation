@@ -1,0 +1,4 @@
+---
+
+is_workstation: true
+ansible_connection: local

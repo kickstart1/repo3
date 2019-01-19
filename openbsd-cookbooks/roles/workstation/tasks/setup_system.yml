@@ -1,0 +1,90 @@
+---
+
+- name: setup sysctl.conf
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  sysctl:
+    name: "{{item.name}}"
+    value: "{{item.value}}"
+    sysctl_set: yes
+    sysctl_file: /sysctl.conf
+  with_items:
+    - { name: "machdep.lidaction", value: "1" }
+    - { name: "machdep.allowaperture", value: "2" }
+    - { name: "net.inet.ip.forwarding", value: "1" }
+
+- name: setup hotplugd
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  copy:
+    src: "{{item}}"
+    dest: "/etc/hotplug/{{item}}"
+    owner: root
+    group: wheel
+    mode: 0644
+  with_items:
+    - "attach"
+    - "detach"
+
+- name: setup /etc/apm/suspend
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  copy:
+    src: suspend
+    dest: /etc/apm/suspend
+    owner: root
+    group: wheel
+    mode: 0644
+
+- name: setup network interfaces
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  copy:
+    src: "{{item}}"
+    dest: "/etc/{{item}}"
+    owner: root
+    group: wheel
+    mode: 0640
+  with_items:
+    - "hostname.em0"
+    - "hostname.trunk0"
+    - "hostname.vether0"
+
+- name: setup rc.conf.local
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  copy:
+    src: rc.conf.local
+    dest: /etc/rc.conf.local
+    owner: root
+    group: wheel
+    mode: 0644
+
+- name: setup timezone
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  file:
+    src: "/usr/share/zoneinfo/{{timezone}}"
+    dest: /etc/localtime
+    owner: root
+    group: wheel
+    mode: 0655
+    state: link
+
+# https://someonewhocares.org/hosts/hosts
+- name: setup /etc/hosts
+  become: yes
+  become_method: doas
+  when: ansible_os_family == "OpenBSD"
+  copy:
+    src: hosts
+    dest: /etc/hosts
+    owner: root
+    group: wheel
+    mode: 0644

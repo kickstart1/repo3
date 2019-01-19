@@ -1,0 +1,30 @@
+---
+
+- name: trace become_method
+  when: become_method is defined
+  debug:
+    var: become_method
+
+- name: setup system
+  import_tasks: setup_system.yml
+
+- name: install essentials
+  import_tasks: install_essentials.yml
+
+- name: install firmwares
+  import_tasks: install_firmwares.yml
+
+- name: setup services
+  import_tasks: setup_services.yml
+
+- name: configure user's crontab
+  import_tasks: user_cron.yml
+
+- name: setup browser
+  import_tasks: setup_browser.yml
+
+- name: setup office
+  import_tasks: setup_office.yml
+
+- name: setup vim
+  import_tasks: setup_vim.yml

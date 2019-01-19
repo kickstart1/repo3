@@ -1,0 +1,43 @@
+---
+
+# TODO: set default search engine
+
+- name: ensure package firefox is installed
+  when: ansible_os_family == "OpenBSD"
+  openbsd_pkg:
+    name: firefox
+    state: present
+
+- name: ensure download directory exists
+  file:
+    dest: "{{ansible_env.HOME}}/Downloads/"
+    state: directory
+    mode: '0700'
+
+# TODO:
+# Firefox: http://www.fvue.nl/wiki/Ansible:_Install_Firefox_extension
+# Firefox: https://github.com/alzadude/ansible-firefox-addon
+# Chromium: https://github.com/cmprescott/ansible-role-chrome
+- name: download browser extensions
+  get_url:
+    url: "{{item.url}}"
+    dest: "{{item.dest}}"
+  with_items:
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/1066979/tridactyl-1.14.0-an+fx.xpi', dest: "{{ansible_env.HOME}}/tridactyl-1.14.0-an+fx.xpi" }
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/1081305/bitwarden_free_password_manager-1.32.1-fx.xpi', dest: "{{ansible_env.HOME}}/bitwarden_free_password_manager-1.32.1-fx.xpi" }
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/1084668/privacy_badger-2018.9.20-an+fx.xpi', dest: "{{ansible_env.HOME}}/privacy_badger-2018.9.20-an+fx.xpi" }
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/970953/neat_url-4.1.5-an+fx.xpi?src=dp-btn-primary', dest: "{{ansible_env.HOME}}/neat_url-4.1.5-an+fx.xpi?src=dp-btn-primary" }
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/1082984/https_everywhere-2018.9.19-an+fx.xpi', dest: "{{ansible_env.HOME}}/https_everywhere-2018.9.19-an+fx.xpi" }
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/954445/cookie_autodelete-2.2.0-an+fx.xpi?src=dp-btn-primary', dest: "{{ansible_env.HOME}}/cookie_autodelete-2.2.0-an+fx.xpi?src=dp-btn-primary" }
+    - { url: 'https://addons.mozilla.org/firefox/downloads/file/1077146/noscript_security_suite-10.1.9.6-an+fx.xpi?src=dp-btn-primary', dest: '{{ansible_env.HOME}}/noscript_security_suite-10.1.9.6-an+fx.xpi?src=dp-btn-primary'}
+
+- name: download certificates
+  get_url:
+    url: http://vpnhelp.kaspersky.com/Applications/certificates.zip
+    dest: /tmp/certificates.zip
+    mode: '0644'
+
+# https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/tools/NSS_Tools_certutil
+# TODO
+- name: install certificates
+  command: echo

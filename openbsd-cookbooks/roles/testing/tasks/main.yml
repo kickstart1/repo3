@@ -1,0 +1,5 @@
+---
+
+- name: setup libvirt development env
+  when: install_openbsd_testing is defined
+  import_tasks: openbsd_testing.yml
